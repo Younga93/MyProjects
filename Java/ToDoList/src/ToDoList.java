@@ -22,6 +22,7 @@ public class ToDoList {
 			System.out.println("2. Display high priority tasks");
 			System.out.println("3. Display medium priority tasks");
 			System.out.println("4. Display low priority taks");
+			System.out.println("5. Add a new task");
 			System.out.println("999. Terminate application");
 			
 			userInput = scanner.next();
@@ -44,6 +45,10 @@ public class ToDoList {
 					DisplayTasks(Priority.LOW);
 					PressAnyKeyToContinue();
 					break;
+				case "5":
+					AddTask();
+					PressAnyKeyToContinue();
+					break;
 				case "999":
 					System.out.println("***Thank you***");
 					System.exit(0);
@@ -56,6 +61,7 @@ public class ToDoList {
 		
 	}
 	
+	//For initial tasks
 	public static void AddInitialData()
 	{
 		tasks.add(new Task("Product team meeting","about AAA", Priority.MEDIUM));
@@ -84,6 +90,102 @@ public class ToDoList {
 				System.out.println(t.toString());
 			}
 		}
+	}
+	
+	//Add a new task
+	public static void AddTask()
+	{
+		System.out.println("----------------------------------");
+		System.out.println("1. Without Due 2. With Due");
+		System.out.print("What kind of task will you add?");
+		
+		String userInput = scanner.next();
+		
+		Task t;
+		
+		switch (userInput)
+		{
+			case "1":
+				t = new Task(PromptString("Name of task"), PromptString("Description"), PromptPriority());
+				tasks.add(t);
+				System.out.println(t.toString() + " is added.");
+				break;
+			case "2":
+				t = new TimeLimitTask(PromptString("Name of task"), PromptString("Description"), PromptPriority());
+				((TimeLimitTask) t).setDueDate(PromptString("When is the due date? (dd-mm-yyyy) "));
+				tasks.add(t);
+				System.out.println(t.toString() + " is added.");
+				break;
+			default:
+				System.out.println("***Invalid option has entered.***");
+				PressAnyKeyToContinue();
+				break;
+		}
+	}
+	
+	//Prompting methods
+	public static String PromptString(String value)
+	{
+		System.out.print(value + ": ");
+		
+		String userInput = scanner.next();
+		
+		return userInput;
+	}
+	public static int PromptInt(String value)
+	{
+		boolean checker = true;
+		String userInput;
+		int result = 0;
+		do
+		{
+			checker = false;
+
+			System.out.print(value + ": ");
+			
+			userInput = scanner.next();
+			try
+			{
+				result = Integer.parseInt(userInput);
+			}catch(Exception ex)
+			{
+				checker = true;
+				System.out.println("Please enter an integer.");
+			}
+		}while(checker);
+		
+		return result;
+	}
+	public static Priority PromptPriority()
+	{
+		boolean checker;
+		String userInput;
+		Priority result = null;
+		do
+		{
+			checker = false;
+
+			System.out.print("Choose priority: 1. High 2. Medium 3. Low");
+			
+			userInput = scanner.next();
+			switch(userInput)
+			{
+				case "1":
+					result = Priority.HIGH;
+					break;
+				case "2":
+					result = Priority.MEDIUM;
+					break;
+				case "3":
+					result = Priority.LOW;
+					break;
+				default:
+					checker = true;
+					break;
+			}
+		}while(checker);
+		
+		return result;
 	}
 	
 	public static void PressAnyKeyToContinue()
