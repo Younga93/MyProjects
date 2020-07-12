@@ -1,4 +1,4 @@
-
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -18,11 +18,10 @@ public class ToDoList {
 
 		while(true)
 		{
-			System.out.println("1. Display all tasks");
-			System.out.println("2. Display high priority tasks");
-			System.out.println("3. Display medium priority tasks");
-			System.out.println("4. Display low priority taks");
-			System.out.println("5. Add a new task");
+			System.out.println("1. Display all tasks in order to priority");
+			System.out.println("2. Add a new task");
+			System.out.println("3. Edit a task");
+			System.out.println("4. Delete a task");
 			System.out.println("999. Terminate application");
 			
 			userInput = scanner.next();
@@ -30,23 +29,28 @@ public class ToDoList {
 			switch (userInput)
 			{
 				case "1":
-					DisplayTasks();
-					PressAnyKeyToContinue();
-					break;
-				case "2":
+					//from high priority to low priority
 					DisplayTasks(Priority.HIGH);
-					PressAnyKeyToContinue();
-					break;
-				case "3":
 					DisplayTasks(Priority.MEDIUM);
-					PressAnyKeyToContinue();
-					break;
-				case "4":
 					DisplayTasks(Priority.LOW);
 					PressAnyKeyToContinue();
 					break;
-				case "5":
+				case "2":
+					//Add a new task
 					AddTask();
+					PressAnyKeyToContinue();
+					break;
+				case "3":
+					//Edit a new task
+					DisplayTasks();
+					EditTask(ChooseTask());
+					//DisplayTasks(Priority.MEDIUM);
+					PressAnyKeyToContinue();
+					break;
+				case "4":
+					//Delete a task
+					DisplayTasks();					
+					tasks.remove(ChooseTask());
 					PressAnyKeyToContinue();
 					break;
 				case "999":
@@ -68,7 +72,7 @@ public class ToDoList {
 		tasks.add(new Task("Development team meeting","welcoming new employees", Priority.MEDIUM));
 		tasks.add(new Task("Job interview","Camo Mile, Centennial college Software Engineering", Priority.HIGH));
 		tasks.add(new Task("Laundry","bedding", Priority.LOW));
-		tasks.add(new TimeLimitTask("Pay rent fee","$1200.00", Priority.HIGH, "31-07-2020"));
+		tasks.add(new Task("Pay rent fee","$1200.00", Priority.HIGH, "31-07-2020"));
 	}
 	
 	//Display all tasks
@@ -79,7 +83,6 @@ public class ToDoList {
 			System.out.println(t.toString());
 		}
 	}
-	
 	//Overloaded: Display only selected priority tasks
 	public static void DisplayTasks(Priority p)
 	{
@@ -91,38 +94,47 @@ public class ToDoList {
 			}
 		}
 	}
-	
 	//Add a new task
 	public static void AddTask()
 	{
-		System.out.println("----------------------------------");
-		System.out.println("1. Without Due 2. With Due");
-		System.out.print("What kind of task will you add?");
+		Task t = new Task(PromptString("Name of task"), PromptString("Description"), PromptPriority());
 		
-		String userInput = scanner.next();
-		
-		Task t;
-		
-		switch (userInput)
+		tasks.add(t);
+		System.out.println(t.toString() + " is added.");
+
+	}
+	//
+	public static Task ChooseTask(){
+		int userInput = PromptInt("Choose the id of task");
+		Task task = null;
+		for(Task t : tasks)
 		{
-			case "1":
-				t = new Task(PromptString("Name of task"), PromptString("Description"), PromptPriority());
-				tasks.add(t);
-				System.out.println(t.toString() + " is added.");
-				break;
-			case "2":
-				t = new TimeLimitTask(PromptString("Name of task"), PromptString("Description"), PromptPriority());
-				((TimeLimitTask) t).setDueDate(PromptString("When is the due date? (dd-mm-yyyy) "));
-				tasks.add(t);
-				System.out.println(t.toString() + " is added.");
-				break;
-			default:
-				System.out.println("***Invalid option has entered.***");
-				PressAnyKeyToContinue();
-				break;
+			if(t.id == userInput)
+			{
+				task = t;
+			}
+		}
+		return task;
+	}
+	//Edit a task
+	public static void EditTask(Task task){
+		task.setName(PromptString("Rename the task"));
+		task.setDescription(PromptString("Redescribe the task"));
+		task.setPriority(PromptPriority());
+		boolean checker = true;
+		while(checker)
+		{
+			try{
+				task.setDueDate(PromptString("Reset the due date (dd-MM-yyyy)\nEnter \"No\" to delete due date"));
+				checker = false;
+			}
+			catch(Exception ex)
+			{
+				System.out.println("Invalid value has entered.");
+			}
 		}
 	}
-	
+
 	//Prompting methods
 	public static String PromptString(String value)
 	{
@@ -158,36 +170,44 @@ public class ToDoList {
 	}
 	public static Priority PromptPriority()
 	{
-		boolean checker;
-		String userInput;
+		boolean checker = true;
+		int userInput;
 		Priority result = null;
 		do
 		{
-			checker = false;
-
-			System.out.print("Choose priority: 1. High 2. Medium 3. Low");
+			System.out.println("Choose priority: 1. High 2. Medium 3. Low");
 			
-			userInput = scanner.next();
-			switch(userInput)
+			try
 			{
-				case "1":
-					result = Priority.HIGH;
-					break;
-				case "2":
-					result = Priority.MEDIUM;
-					break;
-				case "3":
-					result = Priority.LOW;
-					break;
-				default:
-					checker = true;
-					break;
+				userInput = Integer.parseInt(scanner.next());
+
+				switch(userInput)
+				{
+					case 1:
+						result = Priority.HIGH;
+						checker = false;
+						break;
+					case 2:
+						result = Priority.MEDIUM;
+						checker = false;
+						break;
+					case 3:
+						result = Priority.LOW;
+						checker = false;
+						break;
+					default:
+						System.out.println("Please choose proper Priority.");
+						break;
+				}
+			}
+			catch(NumberFormatException ex)
+			{
+				System.out.println("Invalid value has entered.");
 			}
 		}while(checker);
 		
 		return result;
 	}
-	
 	public static void PressAnyKeyToContinue()
 	{
 		System.out.println("To go back main menu, press any key to continue.");

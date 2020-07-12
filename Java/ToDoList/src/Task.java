@@ -15,19 +15,31 @@ public class Task //(need to be changed to abstract!!!!!!)
 	protected int id;
 	protected String name;
 	protected String description;
-	protected LocalDate created; 
 	protected Priority priority;
+	protected LocalDate dueDate = null;
+	protected LocalDate created; 
 	
 	protected DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 	
-	//constructor
+	//constructors (with DueDate, withoutDueDate)
+	//without DueDate
 	public Task(String name,String description, Priority priority)
 	{		
 		id = taskId++;
 		this.name = name;
 		this.description = description;
-		created = LocalDate.now();;
 		this.priority = priority;
+		created = LocalDate.now();;
+	}
+	//with DueDate
+	public Task(String name,String description, Priority priority, String dueDateString)
+	{		
+		id = taskId++;
+		this.name = name;
+		this.description = description;
+		this.priority = priority;
+		created = LocalDate.now();;
+		setDueDate(dueDateString);
 	}
 	
 	//Getter and Setter
@@ -49,19 +61,36 @@ public class Task //(need to be changed to abstract!!!!!!)
 	{
 		this.description = description;
 	}
-	//created :read-only
-	public String getCreated()
-	{
-		return created.format(dateFormat);
-	}
 	//priority
 	public Priority getPriority()
 	{
 		return priority;
 	}
-	public void setDescription(Priority priority)
+	public void setPriority(Priority priority)
 	{
 		this.priority = priority;
+	}
+	//created: read-only
+	public String getCreated()
+	{
+		return created.format(dateFormat);
+	}
+	//dueDate: get String type and formatting as LocalDate type.
+	public LocalDate getDueDate()
+	{
+		return dueDate;
+	}
+	public void setDueDate(String userInput)
+	{
+		if(userInput == "No" || userInput == "NO" || userInput == "no"){
+			this.dueDate = null;
+		}
+		else{
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			LocalDate dueDate = LocalDate.parse(userInput, formatter);
+			
+			this.dueDate = dueDate;
+		}
 	}
 	
 	@Override
