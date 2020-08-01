@@ -1,0 +1,42 @@
+----Adding an INTO Clause to a SELECT Statement
+--DECLARE
+--    lv_qty_num NUMBER(3);
+--BEGIN
+--    SELECT SUM(quantity)
+--        INTO lv_qty_num
+--        FROM bb_basketitem
+--        WHERE idBasket=10;
+--    DBMS_OUTPUT.PUT_LINE(lv_qty_num);
+--END;
+--
+----Figure 3-5
+--DECLARE
+--    lv_created_date DATE;
+--    lv_basket_num NUMBER(3);
+--    lv_qty_num NUMBER(3);
+--    lv_sum_num NUMBER(5,2);
+--    lv_days_num NUMBER(3);
+--    lv_shopper_num NUMBER(3) := 25;
+--BEGIN
+--    SELECT idBasket, dtcreated, quantity, subtotal
+--        INTO lv_basket_num, lv_created_date, lv_qty_num, lv_sum_num
+--        FROM bb_basket
+--        WHERE idShopper = lv_shopper_num
+--            AND orderplaced = 0;
+--        lv_days_num := TO_DATE('02/28/12', 'mm/dd/yy') - lv_created_date; --can use  SYSDATE for today.
+--        DBMS_OUTPUT.PUT_LINE(lv_basket_num || ' * ' || lv_created_date || ' * ' || 
+--                            lv_qty_num || ' * ' || lv_sum_num || ' * ' || lv_days_num);
+--END;
+----CHALLENGE 3-1
+----Create a PL/SQL block to retrieve
+----and display the credit card number and type used in purchasing the basket with an ID of 10.
+--DECLARE
+--    lv_credit_txt VARCHAR2(20);
+--    lv_cardtype_txt CHAR(1);
+--BEGIN
+--    SELECT cardtype, cardnumber
+--        INTO lv_cardtype_txt, lv_credit_txt
+--        FROM bb_basket
+--        WHERE idbasket = 10;
+--    DBMS_OUTPUT.PUT_LINE(lv_cardtype_txt || ' * ' || lv_credit_txt);
+--END;
